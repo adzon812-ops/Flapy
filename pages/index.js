@@ -25,9 +25,28 @@ export default function Home() {
       padding: "20px"
     }}>
 
-      <h1 style={{color: "#2563eb"}}>
-        Flapy.kz
-      </h1>
+      <div style={{
+  display: "flex",
+  alignItems: "center",
+  marginBottom: "20px"
+}}>
+  
+  <img 
+    src="/logo.png" 
+    style={{
+      height: "40px",
+      marginRight: "10px"
+    }}
+  />
+
+  <h1 style={{
+    color: "#2563eb",
+    margin: 0
+  }}>
+    Flapy
+  </h1>
+
+</div>
 
       <p>
         Объекты недвижимости
