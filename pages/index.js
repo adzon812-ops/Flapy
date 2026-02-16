@@ -1,42 +1,57 @@
 export default function Home() {
+
+  const listings = [
+    {
+      id: 1,
+      price: "45 000 000 ₸",
+      district: "Есиль",
+      rooms: "2-комнатная",
+      title: "Современная квартира"
+    },
+    {
+      id: 2,
+      price: "32 500 000 ₸",
+      district: "Алматы",
+      rooms: "1-комнатная",
+      title: "Уютная квартира"
+    }
+  ]
+
   return (
     <div style={{
-      fontFamily: 'Arial',
-      background: '#f4f7fb',
-      minHeight: '100vh',
-      padding: '40px'
+      fontFamily: "Arial",
+      background: "#f4f7fb",
+      minHeight: "100vh",
+      padding: "20px"
     }}>
-      
-      <h1 style={{color: '#2563eb'}}>
+
+      <h1 style={{color: "#2563eb"}}>
         Flapy.kz
       </h1>
 
       <p>
-        Платформа недвижимости нового поколения
+        Объекты недвижимости
       </p>
 
-      <button style={{
-        padding: '12px 20px',
-        background: '#2563eb',
-        color: 'white',
-        border: 'none',
-        borderRadius: '8px',
-        cursor: 'pointer'
-      }}>
-        Войти
-      </button>
+      {listings.map(item => (
+        <div key={item.id} style={{
+          background: "white",
+          padding: "15px",
+          borderRadius: "10px",
+          marginBottom: "10px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+        }}>
 
-      <button style={{
-        padding: '12px 20px',
-        background: 'white',
-        color: '#2563eb',
-        border: '1px solid #2563eb',
-        borderRadius: '8px',
-        marginLeft: '10px',
-        cursor: 'pointer'
-      }}>
-        Регистрация
-      </button>
+          <h3>{item.title}</h3>
+
+          <p>{item.rooms} • район {item.district}</p>
+
+          <strong style={{color: "#2563eb"}}>
+            {item.price}
+          </strong>
+
+        </div>
+      ))}
 
     </div>
   )
