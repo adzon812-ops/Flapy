@@ -1,77 +1,65 @@
-export default function Home() {
+import { useState } from "react"
+import { supabase } from "../lib/supabase"
 
-  const listings = [
-    {
-      id: 1,
-      price: "45 000 000 ₸",
-      district: "Есиль",
-      rooms: "2-комнатная",
-      title: "Современная квартира"
-    },
-    {
-      id: 2,
-      price: "32 500 000 ₸",
-      district: "Алматы",
-      rooms: "1-комнатная",
-      title: "Уютная квартира"
+export default function Home() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [message, setMessage] = useState("")
+
+  const handleSignUp = async () => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    })
+    if (error) {
+      setMessage(error.message)
+    } else {
+      setMessage("Регистрация успешна! Проверьте email.")
     }
-  ]
+  }
+
+  const handleSignIn = async () => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    if (error) {
+      setMessage(error.message)
+    } else {
+      setMessage("Вход выполнен!")
+    }
+  }
 
   return (
-    <div style={{
-      fontFamily: "Arial",
-      background: "#f4f7fb",
-      minHeight: "100vh",
-      padding: "20px"
-    }}>
+    <div style={{ padding: 40 }}>
+      <h1>Flapy.kz</h1>
+      <h2>Вход / Регистрация</h2>
 
-      <div style={{
-  display: "flex",
-  alignItems: "center",
-  marginBottom: "20px"
-}}>
-  
-  <img 
-    src="/logo.png" 
-    style={{
-      height: "40px",
-      marginRight: "10px"
-    }}
-  />
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        style={{ display: "block", marginBottom: 10 }}
+      />
 
-  <h1 style={{
-    color: "#2563eb",
-    margin: 0
-  }}>
-    Flapy
-  </h1>
+      <input
+        type="password"
+        placeholder="Пароль"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ display: "block", marginBottom: 10 }}
+      />
 
-</div>
+      <button onClick={handleSignUp} style={{ marginRight: 10 }}>
+        Зарегистрироваться
+      </button>
 
-      <p>
-        Объекты недвижимости
-      </p>
+      <button onClick={handleSignIn}>
+        Войти
+      </button>
 
-      {listings.map(item => (
-        <div key={item.id} style={{
-          background: "white",
-          padding: "15px",
-          borderRadius: "10px",
-          marginBottom: "10px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-        }}>
-
-          <h3>{item.title}</h3>
-
-          <p>{item.rooms} • район {item.district}</p>
-
-          <strong style={{color: "#2563eb"}}>
-            {item.price}
-          </strong>
-
-        </div>
-      ))}
-
+      <p>{message}</p>
     </div>
   )
 }
