@@ -7,16 +7,23 @@ export default function Home() {
   const [message, setMessage] = useState("")
 
   const handleSignUp = async () => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-    if (error) {
-      setMessage(error.message)
-    } else {
-      setMessage("Регистрация успешна! Проверьте email.")
-    }
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  })
+
+  if (error) {
+    setMessage(error.message)
+  } else {
+    await supabase.from("profiles").insert([
+      {
+        id: data.user.id,
+        role: "buyer",
+      },
+    ])
+    setMessage("Регистрация успешна!")
   }
+}
 
   const handleSignIn = async () => {
     const { error } = await supabase.auth.signInWithPassword({
