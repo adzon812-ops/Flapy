@@ -8,33 +8,36 @@ export default function Dashboard() {
 
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [price, setPrice] = useState("")
-  const [city, setCity] = useState("")
-  const [message, setMessage] = useState("")
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    checkUser()
+    getUser()
   }, [])
 
-  const checkUser = async () => {
-    const { data } = await supabase.auth.getUser()
+  const getUser = async () => {
+    const { data: authData } = await supabase.auth.getUser()
 
-    if (!data?.user) {
+    if (!authData?.user) {
       router.push("/login")
       return
     }
 
-    setUser(data.user)
+    setUser(authData.user)
 
-    const { data: profileData } = await supabase
+    const { data: profileData, error } = await supabase
       .from("profiles")
       .select("*")
-      .eq("id", data.user.id)
-      .single()
+      .eq("id", authData.user.id)
 
-    setProfile(profileData)
+    if (error) {
+      console.log("Profile error:", error)
+    }
+
+    if (profileData && profileData.length > 0) {
+      setProfile(profileData[0])
+    }
+
+    setLoading(false)
   }
 
   const handleSignOut = async () => {
@@ -42,32 +45,8 @@ export default function Dashboard() {
     router.push("/")
   }
 
-  const addProperty = async () => {
-    if (!profile || profile.role !== "agent") {
-      setMessage("Только риэлтор может добавлять объекты")
-      return
-    }
-
-    if (!profile.is_verified) {
-      setMessage("Аккаунт ещё не подтверждён")
-      return
-    }
-
-    const { error } = await supabase.from("properties").insert([
-      {
-        agent_id: user.id,
-        title,
-        description,
-        price,
-        city
-      }
-    ])
-
-    if (error) {
-      setMessage(error.message)
-    } else {
-      setMessage("Объект добавлен!")
-    }
+  if (loading) {
+    return <div style={{ padding: 40 }}>Загрузка...</div>
   }
 
   return (
@@ -79,52 +58,9 @@ export default function Dashboard() {
       <br /><br />
 
       <p>Email: {user?.email}</p>
-      <p>Роль: {profile?.role}</p>
+      <p>Роль: {profile?.role || "не найдена"}</p>
 
       <button onClick={handleSignOut}>Выйти</button>
-
-      {profile?.role === "agent" && profile?.is_verified && (
-        <>
-          <hr />
-          <h2>Добавить объект</h2>
-
-          <input
-            placeholder="Название"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <input
-            placeholder="Описание"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-
-          <input
-            placeholder="Цена"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-          />
-
-          <input
-            placeholder="Город"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-          />
-
-          <br /><br />
-
-          <button onClick={addProperty}>Добавить объект</button>
-        </>
-      )}
-
-      {profile?.role === "agent" && !profile?.is_verified && (
-        <p style={{ color: "red" }}>
-          Аккаунт на проверке администратором
-        </p>
-      )}
-
-      <p>{message}</p>
     </div>
   )
 }
