@@ -50,41 +50,63 @@ export default function Login() {
   }
 
   return (
-    <div style={{ padding: 40 }}>
+    <div style={{ padding: 40, maxWidth: 400 }}>
       <h1>Вход / Регистрация</h1>
 
-      <input
-        placeholder="Имя"
-        value={fullName}
-        onChange={(e) => setFullName(e.target.value)}
-      />
+      <div style={{ marginBottom: 15 }}>
+        <input
+          style={{ width: "100%", padding: 8 }}
+          placeholder="Имя"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+        />
+      </div>
 
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      <div style={{ marginBottom: 15 }}>
+        <input
+          style={{ width: "100%", padding: 8 }}
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
 
-      <input
-        type="password"
-        placeholder="Пароль"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      <div style={{ marginBottom: 15 }}>
+        <input
+          style={{ width: "100%", padding: 8 }}
+          type="password"
+          placeholder="Пароль"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
 
-      <select value={role} onChange={(e) => setRole(e.target.value)}>
-        <option value="buyer">Покупатель</option>
-        <option value="agent">Риэлтор</option>
-      </select>
+      <div style={{ marginBottom: 20 }}>
+        <select
+          style={{ width: "100%", padding: 8 }}
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option value="buyer">Покупатель</option>
+          <option value="agent">Риэлтор</option>
+        </select>
+      </div>
 
-      <br /><br />
+      <button
+        style={{ padding: 10, width: "100%", marginBottom: 10 }}
+        onClick={handleSignUp}
+      >
+        Зарегистрироваться
+      </button>
 
-      <button onClick={handleSignUp}>Зарегистрироваться</button>
-      <button onClick={handleSignIn} style={{ marginLeft: 10 }}>
+      <button
+        style={{ padding: 10, width: "100%" }}
+        onClick={handleSignIn}
+      >
         Войти
       </button>
 
-      <p>{message}</p>
+      <p style={{ marginTop: 20, color: "red" }}>{message}</p>
     </div>
   )
 }
