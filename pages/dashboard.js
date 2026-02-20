@@ -11,34 +11,39 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getUser()
+    const loadData = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      if (!session) {
+        router.push("/login")
+        return
+      }
+
+      const currentUser = session.user
+      setUser(currentUser)
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", currentUser.id)
+
+      if (error) {
+        console.log("Profile fetch error:", error)
+      }
+
+      if (data && data.length > 0) {
+        setProfile(data[0])
+      } else {
+        console.log("Profile not found for id:", currentUser.id)
+      }
+
+      setLoading(false)
+    }
+
+    loadData()
   }, [])
-
-  const getUser = async () => {
-    const { data: authData } = await supabase.auth.getUser()
-
-    if (!authData?.user) {
-      router.push("/login")
-      return
-    }
-
-    setUser(authData.user)
-
-    const { data: profileData, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", authData.user.id)
-
-    if (error) {
-      console.log("Profile error:", error)
-    }
-
-    if (profileData && profileData.length > 0) {
-      setProfile(profileData[0])
-    }
-
-    setLoading(false)
-  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -58,7 +63,9 @@ export default function Dashboard() {
       <br /><br />
 
       <p>Email: {user?.email}</p>
-      <p>Роль: {profile?.role || "не найдена"}</p>
+      <p>Role from DB: {profile?.role || "не найдена"}</p>
+      <p>User ID: {user?.id}</p>
+      <p>Profile ID: {profile?.id || "нет профиля"}</p>
 
       <button onClick={handleSignOut}>Выйти</button>
     </div>
