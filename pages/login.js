@@ -23,14 +23,20 @@ export default function Login() {
     }
 
     if (data?.user) {
-      await supabase.from("profiles").insert([
+      // ИСПОЛЬЗУЕМ UPSERT: это решает проблему 409 Conflict.
+      // Если профиль уже создан триггером, мы его просто обновляем.
+      const { error: profileError } = await supabase.from("profiles").upsert([
         {
           id: data.user.id,
           full_name: fullName,
-          role: role,
+          role: role, // Теперь здесь прилетит "realtor" или "buyer"
           is_verified: false
         }
       ])
+
+      if (profileError) {
+        console.error("Profile error:", profileError.message)
+      }
     }
 
     router.push("/dashboard")
@@ -88,7 +94,8 @@ export default function Login() {
           onChange={(e) => setRole(e.target.value)}
         >
           <option value="buyer">Покупатель</option>
-          <option value="agent">Риэлтор</option>
+          {/* ИСПРАВЛЕНО: значение 'realtor' теперь совпадает с вашей базой данных */}
+          <option value="realtor">Риэлтор</option>
         </select>
       </div>
 
