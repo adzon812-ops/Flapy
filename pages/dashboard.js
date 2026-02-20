@@ -24,26 +24,26 @@ export default function Dashboard() {
       const currentUser = session.user
       setUser(currentUser)
 
+      // Запрашиваем данные профиля
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", currentUser.id)
+        .single() // Мы ищем одну конкретную строку
 
       if (error) {
-        console.log("Profile fetch error:", error)
+        console.log("Profile fetch error:", error.message)
       }
 
-      if (data && data.length > 0) {
-        setProfile(data[0])
-      } else {
-        console.log("Profile not found for id:", currentUser.id)
+      if (data) {
+        setProfile(data)
       }
 
       setLoading(false)
     }
 
     loadData()
-  }, [])
+  }, [router])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -62,12 +62,13 @@ export default function Dashboard() {
 
       <br /><br />
 
-      <p>Email: {user?.email}</p>
-      <p>Role from DB: {profile?.role || "не найдена"}</p>
-      <p>User ID: {user?.id}</p>
-      <p>Profile ID: {profile?.id || "нет профиля"}</p>
+      <p><strong>Email:</strong> {user?.email}</p>
+      {/* Теперь здесь будет отображаться правильная роль из базы */}
+      <p><strong>Role from DB:</strong> {profile?.role || "загрузка роли..."}</p>
+      <p><strong>User ID:</strong> {user?.id}</p>
+      <p><strong>Profile ID:</strong> {profile?.id || "нет профиля"}</p>
 
-      <button onClick={handleSignOut}>Выйти</button>
+      <button onClick={handleSignOut} style={{ marginTop: 20 }}>Выйти</button>
     </div>
   )
 }
