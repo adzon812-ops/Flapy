@@ -20,10 +20,11 @@ export default function Home() {
       const { data, error } = await supabase
         .from("properties")
         .select("*")
-        .order("created_at", { ascending: false })
 
-      if (!error && data) {
-        setProperties(data)
+      if (error) {
+        console.error("Ошибка загрузки:", error.message)
+      } else {
+        setProperties(data || [])
       }
 
       setLoading(false)
